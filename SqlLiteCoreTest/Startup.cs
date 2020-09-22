@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SqlLiteCoreTest.DAL;
 
 namespace SqlLiteCoreTest
 {
@@ -25,7 +27,14 @@ namespace SqlLiteCoreTest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<SchoolDbContext>(opt =>
+               opt.UseInMemoryDatabase("school"));
+
+            //
             services.AddControllers();
+
+            //https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware?view=aspnetcore-3.1
+            services.AddResponseCaching();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +48,9 @@ namespace SqlLiteCoreTest
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //https://docs.microsoft.com/en-us/aspnet/core/performance/caching/middleware?view=aspnetcore-3.1
+            app.UseResponseCaching();
 
             app.UseAuthorization();
 
